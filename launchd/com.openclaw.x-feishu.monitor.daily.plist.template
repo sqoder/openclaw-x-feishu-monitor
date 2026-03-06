@@ -3,28 +3,33 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.openclaw.x-feishu.monitor.realtime</string>
+  <string>com.openclaw.x-feishu.monitor.daily</string>
 
   <key>ProgramArguments</key>
   <array>
     <string>/bin/zsh</string>
     <string>-lc</string>
-    <string>cd __ROOT_DIR__ && ./scripts/run_batch.sh >> logs/realtime.log 2>&1</string>
+    <string>cd __ROOT_DIR__ && ./scripts/run_daily_snapshot.sh >> logs/daily.log 2>&1</string>
   </array>
 
   <key>WorkingDirectory</key>
   <string>__ROOT_DIR__</string>
 
   <key>RunAtLoad</key>
-  <true/>
+  <false/>
 
-  <key>StartInterval</key>
-  <integer>__INTERVAL_SECONDS__</integer>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>__DAILY_HOUR__</integer>
+    <key>Minute</key>
+    <integer>__DAILY_MINUTE__</integer>
+  </dict>
 
   <key>StandardOutPath</key>
-  <string>__ROOT_DIR__/logs/realtime.launchd.out.log</string>
+  <string>__ROOT_DIR__/logs/daily.launchd.out.log</string>
 
   <key>StandardErrorPath</key>
-  <string>__ROOT_DIR__/logs/realtime.launchd.err.log</string>
+  <string>__ROOT_DIR__/logs/daily.launchd.err.log</string>
 </dict>
 </plist>

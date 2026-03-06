@@ -8,6 +8,9 @@
 
 特性：
 - 监听指定 X 账号的新帖子（仅推新，默认不推历史旧帖）
+- 双通道推送：
+  - 实时推送：有新帖就推
+  - 每天早上 8:00 补推：无新帖则不推
 - 推送到飞书（通过 `openclaw message send --channel feishu`）
 - 自动输出：作者、发布时间、作品类型、正文+翻译、总结
 - 发布时间统一为中国时间（`UTC+8`）
@@ -66,22 +69,27 @@ DRY_RUN=1 ./scripts/run_once.sh OpenAI
 
 ## 3. 定时运行（macOS launchd）
 
-默认每 300 秒轮询一次：
+安装后会创建 2 个服务：
+- `realtime`：实时轮询（默认每 180 秒）
+- `daily`：每天 08:00 补推一次（没有新帖就不推）
+
+默认安装：
 
 ```bash
 ./scripts/install_launchd.sh
 ```
 
-自定义轮询间隔（秒）：
+自定义实时间隔和每日时间：
 
 ```bash
-INTERVAL_SECONDS=180 ./scripts/install_launchd.sh
+REALTIME_INTERVAL_SECONDS=180 DAILY_HOUR=8 DAILY_MINUTE=0 ./scripts/install_launchd.sh
 ```
 
 查看状态：
 
 ```bash
-launchctl print gui/$UID/com.openclaw.x-feishu.monitor
+launchctl print gui/$UID/com.openclaw.x-feishu.monitor.realtime
+launchctl print gui/$UID/com.openclaw.x-feishu.monitor.daily
 ```
 
 卸载：
@@ -102,6 +110,7 @@ launchctl print gui/$UID/com.openclaw.x-feishu.monitor
 - `ENABLE_ANALYSIS=1`：开启第 5 点总结
 - `ENABLE_DEEP_MEDIA_ANALYSIS=0`：默认关闭深度总结模型调用（更稳）
 - `ALLOW_JINA_FALLBACK=1`：主源失败时允许备用抓取源
+- `DAILY_MAX_POST_AGE_HOURS=24`：每日 8:00 补推时仅看最近多少小时
 
 ## 5. 推送格式
 
@@ -136,4 +145,4 @@ git push -u origin main
 - 无消息：先 `DRY_RUN=1 ./scripts/run_once.sh OpenAI` 看是否能抓到帖子
 - 报 401/鉴权错误：检查 OpenClaw 的 Feishu channel 是否可用
 - 报 rate_limit / cooldown：等待冷却后自动恢复
-- 定时任务无输出：看日志 `logs/runner.log`、`logs/launchd.err.log`
+- 定时任务无输出：看日志 `logs/realtime.log`、`logs/daily.log`、`logs/realtime.launchd.err.log`、`logs/daily.launchd.err.log`

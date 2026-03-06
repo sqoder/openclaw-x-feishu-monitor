@@ -5,6 +5,9 @@ Reusable monitor for X (Twitter) accounts with Feishu push notifications.
 ## Features
 
 - Monitor new posts from specific X accounts (new-only by default)
+- Dual-channel delivery:
+  - Realtime push: push immediately when new posts appear
+  - Daily 08:00 backup push: no post means no message
 - Push to Feishu via `openclaw message send --channel feishu`
 - Structured output: author, publish time, post type, original text + translation, summary
 - Publish time is normalized to China time (`UTC+8`)
@@ -63,22 +66,27 @@ Batch run:
 
 ## Scheduled Run (macOS launchd)
 
-Install (default interval 300s):
+Installer creates 2 services:
+- `realtime`: periodic polling (default every 180s)
+- `daily`: one backup run at 08:00 every day (skip when no fresh posts)
+
+Install:
 
 ```bash
 ./scripts/install_launchd.sh
 ```
 
-Custom interval:
+Custom realtime interval and daily schedule:
 
 ```bash
-INTERVAL_SECONDS=180 ./scripts/install_launchd.sh
+REALTIME_INTERVAL_SECONDS=180 DAILY_HOUR=8 DAILY_MINUTE=0 ./scripts/install_launchd.sh
 ```
 
 Check service status:
 
 ```bash
-launchctl print gui/$UID/com.openclaw.x-feishu.monitor
+launchctl print gui/$UID/com.openclaw.x-feishu.monitor.realtime
+launchctl print gui/$UID/com.openclaw.x-feishu.monitor.daily
 ```
 
 Uninstall:
@@ -99,6 +107,7 @@ Common `.env` values:
 - `ENABLE_ANALYSIS=1`: summary enabled
 - `ENABLE_DEEP_MEDIA_ANALYSIS=0`: deep model analysis disabled by default
 - `ALLOW_JINA_FALLBACK=1`: fallback fetch source when primary fails
+- `DAILY_MAX_POST_AGE_HOURS=24`: daily 08:00 runner checks only this fresh window
 
 ## Push Format
 
@@ -116,7 +125,7 @@ Common `.env` values:
 - No messages: run `DRY_RUN=1 ./scripts/run_once.sh OpenAI`
 - 401/auth errors: verify OpenClaw Feishu channel setup
 - Rate limit/cooldown: wait for cooldown recovery
-- launchd no output: check `logs/runner.log` and `logs/launchd.err.log`
+- launchd no output: check `logs/realtime.log`, `logs/daily.log`, `logs/realtime.launchd.err.log`, `logs/daily.launchd.err.log`
 
 ## License
 
