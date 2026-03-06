@@ -31,6 +31,7 @@ python3 --version
 ## Quick Start
 
 ```bash
+git clone https://github.com/sqoder/openclaw-x-feishu-monitor.git
 cd openclaw-x-feishu-monitor
 cp .env.example .env
 ```

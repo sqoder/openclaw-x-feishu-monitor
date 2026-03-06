@@ -34,6 +34,7 @@ python3 --version
 ## 2. 快速开始
 
 ```bash
+git clone https://github.com/sqoder/openclaw-x-feishu-monitor.git
 cd openclaw-x-feishu-monitor
 cp .env.example .env
 ```
@@ -123,24 +124,7 @@ launchctl print gui/$UID/com.openclaw.x-feishu.monitor.daily
 5、总结
 ```
 
-## 6. 上传到 GitHub
-
-```bash
-cd /Users/wangxinglin/Desktop/openclaw-x-feishu-monitor
-git init
-git add .
-git commit -m "feat: openclaw x to feishu monitor"
-# 替换为你的仓库地址
-git remote add origin https://github.com/<yourname>/openclaw-x-feishu-monitor.git
-git branch -M main
-git push -u origin main
-```
-
-注意：
-- `.env` 已在 `.gitignore` 中，避免把私钥/ID传上去
-- 如果你更新了飞书或 OpenRouter 密钥，只改本地 `.env` 或 OpenClaw 认证即可
-
-## 7. 故障排查
+## 6. 故障排查
 
 - 无消息：先 `DRY_RUN=1 ./scripts/run_once.sh OpenAI` 看是否能抓到帖子
 - 报 401/鉴权错误：检查 OpenClaw 的 Feishu channel 是否可用
