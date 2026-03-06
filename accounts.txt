@@ -1,0 +1,6 @@
+# One X handle per line (without @)
+OpenAI
+AnthropicAI
+cursor_ai
+openaidevs
+sama
